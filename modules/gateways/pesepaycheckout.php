@@ -1,28 +1,6 @@
 <?php
 /**
- * WHMCS Sample Payment Gateway Module
- *
- * Payment Gateway modules allow you to integrate payment solutions with the
- * WHMCS platform.
- *
- * This sample file demonstrates how a payment gateway module for WHMCS should
- * be structured and all supported functionality it can contain.
- *
- * Within the module itself, all functions must be prefixed with the module
- * filename, followed by an underscore, and then the function name. For this
- * example file, the filename is "gatewaymodule" and therefore all functions
- * begin "gatewaymodule_".
- *
- * If your module or third party API does not support a given function, you
- * should not define that function within your module. Only the _config
- * function is required.
- *
- * For more information, please refer to the online documentation.
- *
- * @see https://developers.whmcs.com/payment-gateways/
- *
- * @copyright Copyright (c) WHMCS Limited 2017
- * @license http://www.whmcs.com/license/ WHMCS Eula
+ * WHMCS Pesepay Payment Gateway Module
  */
 
 if (!defined("WHMCS")) {
@@ -34,15 +12,12 @@ if (!defined("WHMCS")) {
  *
  * Values returned here are used to determine module related capabilities and
  * settings.
- *
- * @see https://developers.whmcs.com/payment-gateways/meta-data-params/
- *
  * @return array
  */
 function gatewaymodule_MetaData()
 {
     return array(
-        'DisplayName' => 'Sample Payment Gateway Module',
+        'DisplayName' => 'Pesepay Payment Gateway Module',
         'APIVersion' => '1.1', // Use API Version 1.1
         'DisableLocalCreditCardInput' => true,
         'TokenisedStorage' => false,
