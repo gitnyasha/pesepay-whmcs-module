@@ -1,3 +1,6 @@
+
+![Pesepay logo](https://github.com/gitnyasha/pesepay-whmcs-module/assets/45620987/95f132ef-a4cf-40c6-a347-08498c2eb5b5)
+
 # Pesepay Payment Gateway Module for WHMCS
 
 ### Summary
