@@ -10,7 +10,7 @@ use Codevirtus\Payments\Pesepay;
 require_once __DIR__ . '/../../../init.php';
 require_once __DIR__ . '/../../../includes/gatewayfunctions.php';
 require_once __DIR__ . '/../../../includes/invoicefunctions.php';
-require_once dirname(__DIR__) . '/codevirtus/pesepay/autoloader.php';
+require_once dirname(__DIR__) . '/pesepay/lib/autoloader.php';
 
 // Detect module name from filename.
 $gatewayModuleName = basename(__FILE__, '.php');

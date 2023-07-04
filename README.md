@@ -1,47 +1,30 @@
-# WHMCS Sample Third Party Payment Gateway Module #
+# Pesepay Payment Gateway Module for WHMCS
 
-## Summary ##
+### Summary
 
-Payment Gateway modules allow you to integrate payment solutions with the WHMCS
-platform.
+Pesepay is a payment gateway module designed for WHMCS, a popular web hosting billing and automation platform. The module allows customers to make payments through various payment methods, including Ecocash and Zimswitch for local transactions, as well as Mastercard and Visa for international payments. With a focus on security and seamless integration, Pesepay ensures a reliable and user-friendly payment experience for both merchants and customers.
 
-There are two types of gateway module:
+### Installation
 
-* Third Party Gateways - these are payment solutions where checkout occurs
-on a remote website, usually hosted by the payment gateway themselves.
+To install the Pesepay gateway module for WHMCS, follow these steps:
 
-* Merchant Gateways - these are payment solutions where credit card details
-are collected - usually within the WHMCS application, though more and more
-often this will be done remotely, typically via an iframe, with a page hosted
-remotely by the payment gateway enabling tokenised storage.
+1. Download the Pesepay module files from the GitHub repository: [GitHub Repository](https://github.com/gitnyasha/pesepay-whmcs-module
+)
+2. Upload the entire contents of the pesepay-whmcs-module directory to the modules/gateways/ directory of your WHMCS installation take **note** that the callback folder will aleady be there so you just have to copy the file inside the pesepay-whmcs-module/modules/gateways/callback directory into your whmcs modules/gateways/callback directory.
+3. Your directory structure after the installation should look like this:
 
-The sample files here demonstrate how we suggest a Third Party Payment Gateway
-module for WHMCS be structured and implemented.
-
-For more information, please refer to the documentation at:
-https://developers.whmcs.com/payment-gateways/
-
-## Recommended Module Content ##
-
-The recommended structure of a third party gateway module is as follows.
-
-```
- modules/gateways/
-  |- callback/gatewaymodule.php
-  |  gatewaymodule.php
+```bash
+modules/gateways/pesepay
+modules/gateways/callback/pesepay.php
+modules/gateways/pesepay.php
 ```
 
-## Minimum Requirements ##
+Once the files are in their respective locations, you can proceed with the configuration of the Pesepay payment gateway within the WHMCS admin panel.
 
-For the latest WHMCS minimum system requirements, please refer to
-https://docs.whmcs.com/System_Requirements
 
-We recommend your module follows the same minimum requirements wherever
-possible.
+### Contribution
+Contributions to the Pesepay payment gateway module for WHMCS are welcome! If you encounter any issues, have feature requests, or want to improve the module, feel free to create a pull request or raise an issue in the GitHub repository.
 
-## Useful Resources
-* [Developer Resources](https://developers.whmcs.com/)
-* [Hook Documentation](https://developers.whmcs.com/hooks/)
-* [API Documentation](https://developers.whmcs.com/api/)
+GitHub Repository: [gitnyasha](https://github.com/gitnyasha/pesepay-whmcs-module)
 
-[WHMCS Limited](https://www.whmcs.com)
+Let's work together to make Pesepay even better!

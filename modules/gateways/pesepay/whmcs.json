@@ -3,20 +3,20 @@
     "type": "whmcs-gateways",
     "name": "pesepay",
     "license": "MIT",
-    "category": "gateway",
+    "category": "payments",
     "description": {
         "name": "Pesepay",
         "tagline": "Pesepay allow you to integrate Zimbabwean and Foreign payment solutions with the WHMCS platform.",
-        "long": "Pesepay is a versatile payment gateway solution that enables users to facilitate transactions using multiple payment methods. With Pesepay, customers have the convenience of making payments through popular Zimbabwean payment systems, such as Ecocash and Zimswitch. Additionally, Pesepay extends its capabilities to cater to a broader audience by supporting international payment options like Mastercard and Visa. This broad compatibility ensures seamless and efficient payment processing for a diverse range of users, enhancing the accessibility and ease of financial transactions both locally and globally.",
+        "long": "Pesepay is a versatile payment gateway solution that enables users to facilitate transactions using multiple payment methods. With Pesepay, customers have the convenience of making payments through popular Zimbabwean payment systems, such as Ecocash and Zimswitch. Additionally, Pesepay extends its capabilities to cater to a broader audience by supporting international payment options like Visa. This broad compatibility ensures seamless and efficient payment processing for a diverse range of users, enhancing the accessibility and ease of financial transactions both locally and globally.",
         "features": [
-            "Multiple Payment Methods: Pesepay provides support for various payment methods, including Ecocash and Zimswitch for local payments, as well as international options like Mastercard and Visa, offering a wide range of payment choices to customers.",
+            "Multiple Payment Methods: Pesepay provides support for various payment methods, including Ecocash and Zimswitch for local payments, as well as international options like Visa, offering a wide range of payment choices to customers.",
             "Secure Payment Processing: Pesepay ensures the security of transactions by redirecting users to the Pesepay payment page to enter their payment details securely. This redirects customers away from the merchant's website to a secure environment, reducing the risk of sensitive information exposure.",
             "Enhanced Security Measures: Pesepay employs industry-standard security protocols, encryption techniques, and secure communication channels to safeguard sensitive financial data during the payment process, maintaining the confidentiality of customers' card information.",
             "Transaction Management: Merchants can access a comprehensive dashboard or backend system to view and manage transactions, track payment statuses, and reconcile records efficiently."
         ]
     },
     "logo": {
-        "filename": "pesepaybtn.svg"
+        "filename": "logo.png"
     },
     "support": {
         "homepage": "https:\/\/www.pesepay.com\/",

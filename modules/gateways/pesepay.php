@@ -10,7 +10,7 @@ if (!defined("WHMCS")) {
     die("This file cannot be accessed directly");
 }
 
-require_once __DIR__ . '/codevirtus/pesepay/autoloader.php';
+require_once __DIR__ . '/pesepay/lib/autoloader.php';
 
 /**
  * Define module related meta data.
@@ -22,7 +22,7 @@ require_once __DIR__ . '/codevirtus/pesepay/autoloader.php';
 function pesepay_MetaData()
 {
     return array(
-        'DisplayName' => 'Pesepay Payment Gateway Module',
+        'DisplayName' => 'Pesepay',
         'APIVersion' => '1.1', // Use API Version 1.1
         'DisableLocalCreditCardInput' => true,
         'TokenisedStorage' => false,
@@ -125,7 +125,7 @@ function pesepay_link($params)
             throw new Exception("Pesepay Error Initiating Transaction");
         }
 
-        $svg = base64_encode(file_get_contents(__DIR__ . "/codevirtus/pesepay/pesepaybtn.svg"));
+        $svg = base64_encode(file_get_contents(__DIR__ . "/pesepay/lib/pesepaybtn.svg"));
 
         // Append the form HTML to the output
         $htmlOutput .= "<form style='padding-top: 15px' method='get' action='https://pay.pesepay.com/#/pesepay-payments{$response->redirectUrl()}'>
