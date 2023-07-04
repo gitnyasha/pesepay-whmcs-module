@@ -110,15 +110,8 @@ function gatewaymodule_link($params)
     $pesepay->returnUrl = $returnUrl;
     $pesepay->resultUrl = $url;
 
-    $transaction = $pesepay->createTransaction($amount, $currencyCode, $description, $invoiceId);
+    $transaction = $pesepay->createTransaction($amount, $currencyCode, "Website hosting payment for invoice #" . $invoiceId . " Time: " . date("h:i:sa") . "", "Invoice #" . $invoiceId . " Time: " . date("h:i:sa"));
 
-    // $requiredFields = [
-    //     "creditCardExpiryDate" => "12/23",
-    //     "creditCardNumber" => "4867960000005461",
-    //     "creditCardSecurityNumber" => "608",
-    // ];
-
-    // $payment = $pesepay->createPayment($currencyCode, 'PZW204', $client_email, '07211111111', $client_firstname);
     $htmlOutput = "";
 
     try {
@@ -132,14 +125,14 @@ function gatewaymodule_link($params)
         $svg = base64_encode(file_get_contents(__DIR__ . "/pesepay/pesepaybtn.svg"));
 
         // Append the form HTML to the output
-        $htmlOutput .= "<form style='padding-top: 15px' method='get' action='{$response->redirectUrl()}'>
+        $htmlOutput .= "<form style='padding-top: 15px' method='get' action='https://pay.pesepay.com/#/pesepay-payments{$response->redirectUrl()}'>
             <button title='Pay with Pesepay' style='height:55px;background:none;border:none;' type='submit'>
                 <img src=\"data:image/svg+xml;base64,{$svg}\" style='max-height:55px;'>
             </button>
         </form>";
 
     } catch (Exception $ex) {
-        $htmlOutput .= "<h6>An error occurred while initiating transaction</h6>";
+        $htmlOutput .= "<h6>Error Initiating transaction</h6>";
     }
 
     return $htmlOutput;

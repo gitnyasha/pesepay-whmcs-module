@@ -22,19 +22,6 @@ if (!$gatewayParams['type']) {
     die("Module Not Activated");
 }
 
-// Retrieve data returned in payment gateway callback
-// Varies per payment gateway
-// $success = $_POST["x_status"];
-// $invoiceId = $_POST["x_invoice_id"];
-// $transactionId = $_POST["x_trans_id"];
-// $paymentAmount = $_POST["x_amount"];
-// $paymentFee = $_POST["x_fee"];
-// $hash = $_POST["x_hash"];
-// $integrationId = $gatewayParams['integrationID'];
-// $integrationKey = $gatewayParams['integrationKey'];
-
-// $transactionStatus = $success ? 'Success' : 'Failure';
-
 $pesepay = new Pesepay($integrationKey, $encryptionKey);
 // Check if the request method is POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -44,20 +31,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = json_decode($requestBody);
 
 // Access the individual fields
-    $merchantReference = $data->merchantReference;
     $amountDetails = $data->amountDetails;
     $applicationId = filter_var($data->applicationId, FILTER_SANITIZE_NUMBER_INT);
-    $applicationName = filter_var($data->applicationName, FILTER_SANITIZE_STRING);
-    $dateOfTransaction = filter_var($data->dateOfTransaction, FILTER_SANITIZE_STRING);
-    $pollUrl = filter_var($data->pollUrl, FILTER_SANITIZE_STRING);
-    $reasonForPayment = filter_var($data->reasonForPayment, FILTER_SANITIZE_STRING);
-    $redirectUrl = filter_var($data->redirectUrl, FILTER_SANITIZE_STRING);
-    $referenceNumber = filter_var($data->referenceNumber, FILTER_SANITIZE_STRING);
-    $resultUrl = filter_var($data->resultUrl, FILTER_SANITIZE_STRING);
-    $returnUrl = filter_var($data->returnUrl, FILTER_SANITIZE_STRING);
-    $transactionStatus = filter_var($data->transactionStatus, FILTER_SANITIZE_STRING);
+    $applicationName = htmlspecialchars($data->applicationName, ENT_QUOTES, 'UTF-8');
+    $dateOfTransaction = htmlspecialchars($data->dateOfTransaction, ENT_QUOTES, 'UTF-8');
+    $pollUrl = htmlspecialchars($data->pollUrl, ENT_QUOTES, 'UTF-8');
+    $reasonForPayment = htmlspecialchars($data->reasonForPayment, ENT_QUOTES, 'UTF-8');
+    $redirectUrl = htmlspecialchars($data->redirectUrl, ENT_QUOTES, 'UTF-8');
+    $referenceNumber = htmlspecialchars($data->referenceNumber, ENT_QUOTES, 'UTF-8');
+    $resultUrl = htmlspecialchars($data->resultUrl, ENT_QUOTES, 'UTF-8');
+    $returnUrl = htmlspecialchars($data->returnUrl, ENT_QUOTES, 'UTF-8');
+    $merchantReference = htmlspecialchars($data->merchantReference, ENT_QUOTES, 'UTF-8');
+    $transactionStatus = htmlspecialchars($data->transactionStatus, ENT_QUOTES, 'UTF-8');
     $transactionStatusCode = filter_var($data->transactionStatusCode, FILTER_SANITIZE_NUMBER_INT);
-    $transactionStatusDescription = filter_var($data->transactionStatusDescription, FILTER_SANITIZE_STRING);
+    $transactionStatusDescription = htmlspecialchars($data->transactionStatusDescription, ENT_QUOTES, 'UTF-8');
 
     $status = $transactionStatus ? 'SUCCESS' : 'FAILED';
 
@@ -98,7 +85,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
          * @param string $gatewayName Gateway Name
          */
 
-        $invoiceId = checkCbInvoiceID($merchantReference, $gatewayParams['name']);
+        $invoiceNumber = '';
+        $pattern = '/#(\d+)/';
+        if (preg_match($pattern, $reasonForPayment, $matches)) {
+            $invoiceNumber = intval($matches[1]);
+        }
+
+        $invoiceId = checkCbInvoiceID($invoiceNumber, $gatewayParams['name']);
 
         /**
          * Check Callback Transaction ID.
@@ -140,7 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
              * @param string $gatewayModule  Gateway module name
              */
             addInvoicePayment(
-                $merchantReference,
+                $invoiceNumber,
                 $referenceNumber,
                 $amountDetails->amount,
                 $amountDetails->merchantAmount,
