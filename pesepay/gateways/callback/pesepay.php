@@ -10,6 +10,7 @@ use Codevirtus\Payments\Pesepay;
 require_once __DIR__ . '/../../../init.php';
 require_once __DIR__ . '/../../../includes/gatewayfunctions.php';
 require_once __DIR__ . '/../../../includes/invoicefunctions.php';
+require_once dirname(__DIR__) . '/codevirtus/pesepay/autoloader.php';
 
 // Detect module name from filename.
 $gatewayModuleName = basename(__FILE__, '.php');
@@ -41,7 +42,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $referenceNumber = htmlspecialchars($data->referenceNumber, ENT_QUOTES, 'UTF-8');
     $resultUrl = htmlspecialchars($data->resultUrl, ENT_QUOTES, 'UTF-8');
     $returnUrl = htmlspecialchars($data->returnUrl, ENT_QUOTES, 'UTF-8');
-    $merchantReference = htmlspecialchars($data->merchantReference, ENT_QUOTES, 'UTF-8');
     $transactionStatus = htmlspecialchars($data->transactionStatus, ENT_QUOTES, 'UTF-8');
     $transactionStatusCode = filter_var($data->transactionStatusCode, FILTER_SANITIZE_NUMBER_INT);
     $transactionStatusDescription = htmlspecialchars($data->transactionStatusDescription, ENT_QUOTES, 'UTF-8');
@@ -49,8 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $status = $transactionStatus ? 'SUCCESS' : 'FAILED';
 
 // Construct the sanitized information string
-    $information = "merchantReference: " . $merchantReference . "\n" .
-    "Amount: " . $amountDetails->amount . "\n" .
+    $information = "Amount: " . $amountDetails->amount . "\n" .
     "Currency Code: " . $amountDetails->currencyCode . "\n" .
     "Default Currency Amount: " . $amountDetails->defaultCurrencyAmount . "\n" .
     "Merchant Amount: " . $amountDetails->merchantAmount . "\n" .

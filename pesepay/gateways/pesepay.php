@@ -1,6 +1,7 @@
 <?php
 
 use Codevirtus\Payments\Pesepay;
+
 /**
  * WHMCS Pesepay Payment Gateway Module
  */
@@ -9,6 +10,8 @@ if (!defined("WHMCS")) {
     die("This file cannot be accessed directly");
 }
 
+require_once __DIR__ . '/codevirtus/pesepay/autoloader.php';
+
 /**
  * Define module related meta data.
  *
@@ -16,7 +19,7 @@ if (!defined("WHMCS")) {
  * settings.
  * @return array
  */
-function gatewaymodule_MetaData()
+function pesepay_MetaData()
 {
     return array(
         'DisplayName' => 'Pesepay Payment Gateway Module',
@@ -46,7 +49,7 @@ function gatewaymodule_MetaData()
  *
  * @return array
  */
-function gatewaymodule_config()
+function pesepay_config()
 {
     return array(
         // the friendly display name for a payment gateway should be
@@ -86,7 +89,7 @@ function gatewaymodule_config()
  *
  * @return string
  */
-function gatewaymodule_link($params)
+function pesepay_link($params)
 {
     // Gateway Configuration Parameters
     $integrationKey = $params['integrationKey'];
@@ -122,7 +125,7 @@ function gatewaymodule_link($params)
             throw new Exception("Pesepay Error Initiating Transaction");
         }
 
-        $svg = base64_encode(file_get_contents(__DIR__ . "/pesepay/pesepaybtn.svg"));
+        $svg = base64_encode(file_get_contents(__DIR__ . "/codevirtus/pesepay/pesepaybtn.svg"));
 
         // Append the form HTML to the output
         $htmlOutput .= "<form style='padding-top: 15px' method='get' action='https://pay.pesepay.com/#/pesepay-payments{$response->redirectUrl()}'>
