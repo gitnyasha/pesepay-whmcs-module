@@ -128,7 +128,7 @@ function pesepay_link($params)
         $svg = base64_encode(file_get_contents(__DIR__ . "/pesepay/lib/pesepaybtn.svg"));
 
         // Append the form HTML to the output
-        $htmlOutput .= "<form style='padding-top: 15px' method='get' action='https://pay.pesepay.com/#/pesepay-payments{$response->redirectUrl()}'>
+        $htmlOutput .= "<form style='padding-top: 15px' method='get' action='{$response->redirectUrl()}'>
             <button title='Pay with Pesepay' style='height:55px;background:none;border:none;' type='submit'>
                 <img src=\"data:image/svg+xml;base64,{$svg}\" style='max-height:55px;'>
             </button>
