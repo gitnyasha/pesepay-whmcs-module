@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
          * @param string $gatewayName Gateway Name
          */
 
-        $invoiceNumber = (int) trim(str_replace("Payment for invoice", "", $reasonForPayment))
+        $invoiceNumber = (int) trim(str_replace("Payment for invoice", "", $reasonForPayment));
 
         $invoiceId = checkCbInvoiceID($invoiceNumber, $gatewayParams['name']);
 
