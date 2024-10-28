@@ -84,11 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
          * @param string $gatewayName Gateway Name
          */
 
-        $invoiceNumber = '';
-        $pattern = '/#(\d+)/';
-        if (preg_match($pattern, $reasonForPayment, $matches)) {
-            $invoiceNumber = intval($matches[1]);
-        }
+        $invoiceNumber = (int) trim(str_replace("Payment for invoice", "", $reasonForPayment))
 
         $invoiceId = checkCbInvoiceID($invoiceNumber, $gatewayParams['name']);
 
@@ -132,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
              * @param string $gatewayModule  Gateway module name
              */
             addInvoicePayment(
-                $invoiceNumber,
+                $invoiceId,
                 $referenceNumber,
                 $amountDetails->amount,
                 $amountDetails->merchantAmount,
