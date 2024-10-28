@@ -115,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         logTransaction($gatewayParams['name'], $information, $transactionStatus);
         $response = $pesepay->checkPayment($referenceNumber);
 
-        if ($response->paid()) {
+        if ($response->paid() || $transactionStatus == "SUCCESS") {
             /**
              * Add Invoice Payment.
              *
