@@ -113,7 +113,7 @@ function pesepay_link($params)
     $pesepay->returnUrl = $returnUrl;
     $pesepay->resultUrl = $url;
 
-    $transaction = $pesepay->createTransaction($amount, $currencyCode, "Website hosting payment for invoice #" . $invoiceId . " Time: " . date("h:i:sa") . "", "Invoice #" . $invoiceId . " Time: " . date("h:i:sa"));
+    $transaction = $pesepay->createTransaction($amount, $currencyCode, "Payment for invoice " . $invoiceId, "Invoice #" . $invoiceId . " Time: " . date("h:i:sa"));
 
     $htmlOutput = "";
 
