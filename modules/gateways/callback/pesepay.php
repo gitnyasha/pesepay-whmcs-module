@@ -113,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
          * @param string $transactionStatus  Status
          */
         logTransaction($gatewayParams['name'], $information, $transactionStatus);
-        $response = $pesepay->checkPayment($referenceNumber);
+        // $response = $pesepay->checkPayment($referenceNumber);
 
         if ($transactionStatus == "SUCCESS") {
             /**
