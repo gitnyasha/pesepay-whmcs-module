@@ -2,12 +2,12 @@
 
 namespace Codevirtus\Payments;
 
-include_once 'Payment.php';
-include_once 'Customer.php';
-include_once 'Amount.php';
-include_once 'Response.php';
-include_once 'ErrorResponse.php';
-include_once 'Transaction.php';
+include_once('Payment.php');
+include_once('Customer.php');
+include_once('Amount.php');
+include_once('Response.php');
+include_once('ErrorResponse.php');
+include_once('Transaction.php');
 
 class Pesepay
 {
@@ -47,9 +47,8 @@ class Pesepay
 
         $response = $this->initCurlRequest("GET", $pollUrl);
 
-        if ($response instanceof ErrorResponse) {
+        if ($response instanceof ErrorResponse)
             return $response;
-        }
 
         $decryptedData = $this->decrypt($response['payload']);
 
@@ -58,7 +57,7 @@ class Pesepay
         $pollUrl = $jsonDecoded['pollUrl'];
         $paid = $jsonDecoded['transactionStatus'] == 'SUCCESS';
 
-        return new Response($referenceNumber, $pollUrl, null, $paid);
+        return new Response($referenceNumber, $pollUrl, null, $paid, $jsonDecoded);
     }
 
     public function checkPayment($referenceNumber)
@@ -69,13 +68,11 @@ class Pesepay
 
     public function initiateTransaction($transaction)
     {
-        if ($this->resultUrl == null) {
+        if ($this->resultUrl == null)
             throw new \InvalidArgumentException('Result url has not beeen specified.');
-        }
 
-        if ($this->returnUrl == null) {
+        if ($this->returnUrl == null)
             throw new \InvalidArgumentException('Return url has not been specified.');
-        }
 
         $transaction->resultUrl = $this->resultUrl;
         $transaction->returnUrl = $this->returnUrl;
@@ -86,9 +83,8 @@ class Pesepay
 
         $response = $this->initCurlRequest("POST", self::INITIATE_PAYMENT_URL, $payload);
 
-        if ($response instanceof ErrorResponse) {
+        if ($response instanceof ErrorResponse)
             return $response;
-        }
 
         $decryptedData = $this->decrypt($response['payload']);
 
@@ -97,19 +93,19 @@ class Pesepay
         $pollUrl = $jsonDecoded['pollUrl'];
         $redirectUrl = $jsonDecoded['redirectUrl'];
 
-        return new Response($referenceNumber, $pollUrl, $redirectUrl);
+        return new Response($referenceNumber, $pollUrl, $redirectUrl, $jsonDecoded);
     }
 
-    public function makeSeamlessPayment($payment, $reasonForPayment, $amount, $requiredFields = null)
+    public function makeSeamlessPayment($payment, $reasonForPayment, $amount, $requiredFields = null, $merchantReference = null)
     {
-        if ($this->resultUrl == null) {
+        if ($this->resultUrl == null)
             throw new \InvalidArgumentException('Result url has not beeen specified.');
-        }
 
         $payment->resultUrl = $this->resultUrl;
         $payment->returnUrl = $this->returnUrl;
         $payment->reasonForPayment = $reasonForPayment;
         $payment->amountDetails = new Amount($amount, $payment->currencyCode);
+        $payment->merchantReference = $merchantReference;
 
         $payment->setRequiredFields($requiredFields);
 
@@ -119,9 +115,8 @@ class Pesepay
 
         $response = $this->initCurlRequest("POST", self::MAKE_SEAMLESS_PAYMENT_URL, $payload);
 
-        if ($response instanceof ErrorResponse) {
+        if ($response instanceof ErrorResponse)
             return $response;
-        }
 
         $decryptedData = $this->decrypt($response['payload']);
 
@@ -129,7 +124,7 @@ class Pesepay
         $referenceNumber = $jsonDecoded['referenceNumber'];
         $pollUrl = $jsonDecoded['pollUrl'];
 
-        return new Response($referenceNumber, $pollUrl);
+        return new Response($referenceNumber, $pollUrl, null, false, $jsonDecoded);
     }
 
     public function createTransaction($amount, $currencyCode, $paymentReason, $merchantReference = null)
@@ -150,7 +145,7 @@ class Pesepay
         $headers = [
             'key: ' . $this->integrationKey,
             'Content-Type: application/json',
-            'Accept: application/json',
+            'Accept: application/json'
         ];
 
         $curl = curl_init();
@@ -160,7 +155,7 @@ class Pesepay
             CURLOPT_CUSTOMREQUEST => $requestType,
             CURLOPT_HTTPHEADER => $headers,
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_USERAGENT => 'cUrl',
+            CURLOPT_USERAGENT => 'cUrl'
         ]);
 
         if ($requestType == "POST") {
@@ -193,7 +188,7 @@ class Pesepay
 
     private function encrypt($plainText)
     {
-        // echo $this->encryptionKey;
+        // echo $this->encryptionKey;   
         try {
             // Check secret length
             if (!$this->isKeyLengthValid($this->encryptionKey)) {
@@ -211,7 +206,7 @@ class Pesepay
             );
             // Return successful encoded object
             return $raw;
-        } catch (\Exception$e) {
+        } catch (\Exception $e) {
             // Operation failed
             echo $e;
             return new static(isset($initVector), null, $e->getMessage());
@@ -258,12 +253,14 @@ class Pesepay
             // Return successful decoded object
             return $decoded;
 
-        } catch (\Exception$e) {
+        } catch (\Exception $e) {
             // Operation failed
             return new static(isset($initVector), null, $e->getMessage());
         }
 
     }
+
+
 
     /**
      * Check that secret password length is valid

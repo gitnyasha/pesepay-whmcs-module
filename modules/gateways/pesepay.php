@@ -135,7 +135,7 @@ function pesepay_link($params)
         </form>";
 
     } catch (Exception $ex) {
-        $htmlOutput .= "<h6>Error Initiating transaction</h6>";
+        $htmlOutput .= "<h6>Error Initiating transaction: </h6>";
     }
 
     return $htmlOutput;

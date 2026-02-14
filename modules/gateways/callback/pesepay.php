@@ -28,10 +28,10 @@ $pesepay = new Pesepay($integrationKey, $encryptionKey);
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $requestBody = file_get_contents('php://input');
 
-// Validate and sanitize the received JSON data
+    // Validate and sanitize the received JSON data
     $data = json_decode($requestBody);
 
-// Access the individual fields
+    // Access the individual fields
     $amountDetails = $data->amountDetails;
     $applicationId = filter_var($data->applicationId, FILTER_SANITIZE_NUMBER_INT);
     $applicationName = htmlspecialchars($data->applicationName, ENT_QUOTES, 'UTF-8');
@@ -48,13 +48,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $status = $transactionStatus ? 'SUCCESS' : 'FAILED';
 
-// Construct the sanitized information string
+    // Construct the sanitized information string
     $information = "Amount: " . $amountDetails->amount . "\n" .
-    "Currency Code: " . $amountDetails->currencyCode . "\n" .
-    "Default Currency Amount: " . $amountDetails->defaultCurrencyAmount . "\n" .
-    "Merchant Amount: " . $amountDetails->merchantAmount . "\n" .
-    "Total Transaction Amount: " . $amountDetails->totalTransactionAmount . "\n" .
-    "Transaction Service Fee: " . $amountDetails->transactionServiceFee . "\n" .
+        "Currency Code: " . $amountDetails->currencyCode . "\n" .
+        "Default Currency Amount: " . $amountDetails->defaultCurrencyAmount . "\n" .
+        "Merchant Amount: " . $amountDetails->merchantAmount . "\n" .
+        "Total Transaction Amount: " . $amountDetails->totalTransactionAmount . "\n" .
+        "Transaction Service Fee: " . $amountDetails->transactionServiceFee . "\n" .
         "Application ID: " . $applicationId . "\n" .
         "Application Name: " . $applicationName . "\n" .
         "Date of Transaction: " . $dateOfTransaction . "\n" .
