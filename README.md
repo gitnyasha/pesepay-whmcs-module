@@ -11,8 +11,7 @@ Pesepay is a payment gateway module designed for WHMCS, a popular web hosting bi
 
 To install the Pesepay gateway module for WHMCS, follow these steps:
 
-1. Download the Pesepay module files from the GitHub repository: [GitHub Repository](https://github.com/gitnyasha/pesepay-whmcs-module
-)
+1. Download the Pesepay module files from the GitHub repository: [GitHub Repository](https://github.com/codevirtus/pesepay-whmcs)
 2. Upload the entire contents of the pesepay-whmcs-module directory to the modules/gateways/ directory of your WHMCS installation take **note** that the callback folder will aleady be there so you just have to copy the file inside the pesepay-whmcs-module/modules/gateways/callback directory into your whmcs modules/gateways/callback directory.
 3. Your directory structure after the installation should look like this:
 
@@ -40,6 +39,6 @@ When Sandbox Mode is enabled, enter your **sandbox** keys — sandbox keys only 
 ### Contribution
 Contributions to the Pesepay payment gateway module for WHMCS are welcome! If you encounter any issues, have feature requests, or want to improve the module, feel free to create a pull request or raise an issue in the GitHub repository.
 
-GitHub Repository: [gitnyasha](https://github.com/gitnyasha/pesepay-whmcs-module)
+GitHub Repository: [codevirtus](https://github.com/codevirtus/pesepay-whmcs)
 
 Let's work together to make Pesepay even better!
