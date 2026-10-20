@@ -24,6 +24,18 @@ modules/gateways/pesepay.php
 
 Once the files are in their respective locations, you can proceed with the configuration of the Pesepay payment gateway within the WHMCS admin panel.
 
+### Configuration
+
+In **WHMCS admin → System Settings → Payment Gateways → Pesepay**, set:
+
+| Setting | Description |
+|---|---|
+| Integration Key | Your Pesepay integration key |
+| Encryption Key | Your Pesepay encryption key |
+| Sandbox Mode | Enable to send transactions to the Pesepay sandbox environment (`https://api.test.sandbox.pesepay.com/payments-engine`). Leave disabled for production. |
+
+When Sandbox Mode is enabled, enter your **sandbox** keys — sandbox keys only work against the sandbox URL and production keys only against production. The sandbox supports `USD` only and the EcoCash (`PZW211`), Visa (`PZW204`) and Mastercard (`PZW205`) payment methods.
+
 
 ### Contribution
 Contributions to the Pesepay payment gateway module for WHMCS are welcome! If you encounter any issues, have feature requests, or want to improve the module, feel free to create a pull request or raise an issue in the GitHub repository.

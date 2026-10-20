@@ -72,6 +72,11 @@ function pesepay_config()
             'Default' => '',
             'Description' => 'Enter encryption key here',
         ),
+        'sandbox' => array(
+            'FriendlyName' => 'Sandbox Mode',
+            'Type' => 'yesno',
+            'Description' => 'Enable to send transactions to the Pesepay sandbox environment (https://api.test.sandbox.pesepay.com). Make sure your sandbox integration and encryption keys are entered above.',
+        ),
     );
 }
 
@@ -107,9 +112,12 @@ function pesepay_link($params)
     $returnUrl = $params['returnurl'];
     $moduleName = $params['paymentmethod'];
 
+    // Sandbox Configuration Parameter
+    $isSandbox = !empty($params['sandbox']) && $params['sandbox'] != 'off';
+
     $url = $systemUrl . '/modules/gateways/callback/' . $moduleName . '.php';
 
-    $pesepay = new Pesepay($integrationKey, $encryptionKey);
+    $pesepay = new Pesepay($integrationKey, $encryptionKey, $isSandbox);
     $pesepay->returnUrl = $returnUrl;
     $pesepay->resultUrl = $url;
 
@@ -121,21 +129,41 @@ function pesepay_link($params)
 
         $response = $pesepay->initiateTransaction($transaction);
 
-        if (!$response->success()) {
-            throw new Exception("Pesepay Error Initiating Transaction");
+
+        if ($response instanceof \Codevirtus\Payments\ErrorResponse) {
+
+            $htmlOutput .= "<pre>Pesepay Error:\n" .
+                htmlspecialchars(print_r($response, true)) .
+                "</pre>";
+
+            return $htmlOutput;
         }
+
+
+        if (!$response->success()) {
+
+            $htmlOutput .= "<pre>Pesepay Response:\n" .
+                htmlspecialchars(print_r($response->rawData(), true)) .
+                "</pre>";
+
+            return $htmlOutput;
+        }
+
 
         $svg = base64_encode(file_get_contents(__DIR__ . "/pesepay/lib/pesepaybtn.svg"));
 
-        // Append the form HTML to the output
+
         $htmlOutput .= "<form style='padding-top: 15px' method='get' action='{$response->redirectUrl()}'>
-            <button title='Pay with Pesepay' style='height:55px;background:none;border:none;' type='submit'>
+            <button type='submit' style='height:55px;background:none;border:none;'>
                 <img src=\"data:image/svg+xml;base64,{$svg}\" style='max-height:55px;'>
             </button>
-        </form>";
+            </form>";
 
     } catch (Exception $ex) {
-        $htmlOutput .= "<h6>Error Initiating transaction: </h6>";
+
+        $htmlOutput .= "<pre>Exception:\n" .
+            htmlspecialchars($ex->getMessage()) .
+            "</pre>";
     }
 
     return $htmlOutput;

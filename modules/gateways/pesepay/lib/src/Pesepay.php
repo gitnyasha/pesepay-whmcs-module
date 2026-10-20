@@ -11,21 +11,8 @@ include_once('Transaction.php');
 
 class Pesepay
 {
-    const BASE_URL = "https://api.pesepay.com/api/payments-engine";
-    /**
-     * Check payment status API endpoint
-     */
-    const CHECK_PAYMENT_URL = self::BASE_URL . '/v1/payments/check-payment';
-
-    /**
-     * Make Seamless payment API Endpoint
-     */
-    const MAKE_SEAMLESS_PAYMENT_URL = self::BASE_URL . '/v2/payments/make-payment';
-
-    /**
-     * Initiate payment API Endpoint
-     */
-    const INITIATE_PAYMENT_URL = self::BASE_URL . '/v1/payments/initiate';
+    const PROD_BASE_URL = "https://api.pesepay.com/api/payments-engine";
+    const SANDBOX_BASE_URL = "https://api.test.sandbox.pesepay.com/payments-engine";
 
     const ALGORITHM = 'AES-256-CBC';
 
@@ -35,11 +22,13 @@ class Pesepay
     private $encryptionKey;
     public $resultUrl;
     public $returnUrl;
+    public $isSandbox;
 
-    public function __construct($integrationKey, $encryptionKey)
+    public function __construct($integrationKey, $encryptionKey, $isSandbox = false)
     {
         $this->integrationKey = $integrationKey;
         $this->encryptionKey = $encryptionKey;
+        $this->isSandbox = $isSandbox;
     }
 
     public function pollTransaction($pollUrl)
@@ -62,7 +51,7 @@ class Pesepay
 
     public function checkPayment($referenceNumber)
     {
-        $url = self::CHECK_PAYMENT_URL . '?referenceNumber=' . $referenceNumber;
+        $url = $this->checkPaymentUrl() . '?referenceNumber=' . $referenceNumber;
         return $this->pollTransaction($url);
     }
 
@@ -81,7 +70,7 @@ class Pesepay
 
         $payload = json_encode(['payload' => $encryptedData]);
 
-        $response = $this->initCurlRequest("POST", self::INITIATE_PAYMENT_URL, $payload);
+        $response = $this->initCurlRequest("POST", $this->initiatePaymentUrl(), $payload);
 
         if ($response instanceof ErrorResponse)
             return $response;
@@ -113,7 +102,7 @@ class Pesepay
 
         $payload = json_encode(['payload' => $encryptedData]);
 
-        $response = $this->initCurlRequest("POST", self::MAKE_SEAMLESS_PAYMENT_URL, $payload);
+        $response = $this->initCurlRequest("POST", $this->makeSeamlessPaymentUrl(), $payload);
 
         if ($response instanceof ErrorResponse)
             return $response;
@@ -138,6 +127,26 @@ class Pesepay
         $customer = new Customer($email, $phone, $name);
 
         return new Payment($currencyCode, $paymentMethodCode, $customer);
+    }
+
+    private function baseUrl()
+    {
+        return $this->isSandbox ? self::SANDBOX_BASE_URL : self::PROD_BASE_URL;
+    }
+
+    private function checkPaymentUrl()
+    {
+        return $this->baseUrl() . '/v1/payments/check-payment';
+    }
+
+    private function initiatePaymentUrl()
+    {
+        return $this->baseUrl() . '/v1/payments/initiate';
+    }
+
+    private function makeSeamlessPaymentUrl()
+    {
+        return $this->baseUrl() . '/v2/payments/make-payment';
     }
 
     private function initCurlRequest($requestType, $url, $payload = null)

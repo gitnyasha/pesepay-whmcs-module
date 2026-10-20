@@ -30,15 +30,20 @@ $pesepay->resultUrl = "http://example.com/gateway/return";
 ### Make seamless payment
 
 Create the payment 
-##### NB: Customer email or number should be provided
+##### NB: The customer object must be populated — Pesepay returns 500 when `customer` is omitted or its fields are null (verified against the live API, October 2026)
 
 ```php
-$payment = $pesepay->createPayment('CURRECNCY_CODE', 'PAYMENT_METHOD_CODE', 'CUSTOMER_EMAIL(OPTIONAL)', 'CUSTOMER_PHONE_NUMBER(OPTIONAL)', 'CUSTOMER_NAME(OPTIONAL)');
+$payment = $pesepay->createPayment('CURRECNCY_CODE', 'PAYMENT_METHOD_CODE', 'CUSTOMER_EMAIL', 'CUSTOMER_PHONE_NUMBER', 'CUSTOMER_NAME');
 ```
 
 Create an `object` of the required fields (if any)
 ```php
 $requiredFields = ['requiredFieldName'=>'requiredFieldValue'];
+```
+
+For methods with no required fields (e.g. InnBucks `PZW212`) send an empty object, not an empty array:
+```php
+$requiredFields = (object) [];   // encodes as {}
 ```
 
 Send of the payment
