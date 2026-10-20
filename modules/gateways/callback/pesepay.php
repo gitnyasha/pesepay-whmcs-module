@@ -4,11 +4,14 @@
  *
  * Verification follows https://developers.pesepay.com/webhooks/verifying-callbacks/
  *
- * 1. The Authorization header must carry our own integration key — Pesepay
- *    echoes it back. Anything else is a forged post.
- * 2. The result is confirmed server-to-server with Check Payment Status.
+ * 1. The result URL carries an HMAC token (invoice, amount, currency) signed
+ *    with the encryption key. Anything without a valid token is a forged post.
+ * 2. The Authorization header must carry our own integration key — Pesepay
+ *    echoes it back.
+ * 3. The result is confirmed server-to-server with Check Payment Status.
  *    The callback body proves nothing; only the encrypted, key-authenticated
- *    check response decides whether the invoice is marked paid.
+ *    check response decides whether the invoice is marked paid. The verified
+ *    amount and currency must match the ones in the token.
  */
 
 use Codevirtus\Payments\Pesepay;
@@ -58,7 +61,35 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     die("An error occured");
 }
 
-// Step 1: Pesepay sends our own integration key back in the Authorization
+$encryptionKey = isset($gatewayParams['encryptionKey']) ? $gatewayParams['encryptionKey'] : '';
+
+// Step 1: verify the HMAC token that pesepay_link() appended to the result
+// URL. It binds this callback to one invoice, amount and currency. Without
+// the encryption key a forger cannot produce a valid token, so replaying
+// another payment's reference number cannot credit a different invoice.
+$tokenInvoiceId = isset($_GET['invoiceid']) ? $_GET['invoiceid'] : '';
+$tokenAmount = isset($_GET['amount']) ? $_GET['amount'] : '';
+$tokenCurrency = isset($_GET['currency']) ? $_GET['currency'] : '';
+$token = isset($_GET['token']) ? $_GET['token'] : '';
+
+$expectedToken = hash_hmac(
+    'sha256',
+    $tokenInvoiceId . '|' . $tokenAmount . '|' . $tokenCurrency,
+    $encryptionKey
+);
+
+if ($token === '' || $tokenInvoiceId === '' || $tokenAmount === '' || $tokenCurrency === ''
+    || !hash_equals($expectedToken, $token)) {
+    logTransaction(
+        $gatewayParams['name'],
+        'Rejected callback: missing or invalid verification token on the result URL.',
+        'Failed'
+    );
+    http_response_code(403);
+    die('Forbidden');
+}
+
+// Step 2: Pesepay sends our own integration key back in the Authorization
 // header. Reject the request if it is missing or does not match.
 $integrationKey = isset($gatewayParams['integrationKey']) ? $gatewayParams['integrationKey'] : '';
 $authorization = pesepay_authorization_header();
@@ -128,20 +159,13 @@ try {
     /**
      * Validate Callback Invoice ID.
      *
-     * Checks invoice ID is a valid invoice number. Note it will count an
-     * invoice in any status as valid.
-     *
-     * Performs a die upon encountering an invalid Invoice ID.
-     *
-     * Returns a normalised invoice ID.
+     * The invoice number comes from the signed token on the result URL, not
+     * from the (untrusted) callback body.
      *
      * @param int $invoiceId Invoice ID
      * @param string $gatewayName Gateway Name
      */
-
-    $invoiceNumber = (int) trim(str_replace("Payment for invoice", "", $reasonForPayment));
-
-    $invoiceId = checkCbInvoiceID($invoiceNumber, $gatewayParams['name']);
+    $invoiceId = checkCbInvoiceID((int) $tokenInvoiceId, $gatewayParams['name']);
 
     /**
      * Check Callback Transaction ID.
@@ -169,16 +193,19 @@ try {
         die('Verification failed');
     }
 
-    // Cross-check: the callback body must agree with the verified result.
+    // Cross-check: the verified transaction must match the invoice, amount
+    // and currency that were signed into the token when the payment link was
+    // created. A reference number from a smaller payment can never settle a
+    // bigger invoice this way.
     $verifiedAmount = (float) $verification->amount();
     $verifiedCurrency = strtoupper((string) $verification->currencyCode());
 
-    if (abs((float) $amountDetails->amount - $verifiedAmount) > 0.0001
-        || strtoupper((string) $amountDetails->currencyCode) !== $verifiedCurrency) {
+    if (abs((float) $tokenAmount - $verifiedAmount) > 0.0001
+        || strtoupper($tokenCurrency) !== $verifiedCurrency) {
         logTransaction(
             $gatewayParams['name'],
-            "Rejected callback for {$referenceNumber}: payload does not match the verified transaction.\n" .
-            "Payload amount: {$amountDetails->amount} {$amountDetails->currencyCode}\n" .
+            "Rejected callback for {$referenceNumber}: verified transaction does not match the invoice token.\n" .
+            "Token amount: {$tokenAmount} {$tokenCurrency}\n" .
             "Verified amount: {$verification->amount()} {$verification->currencyCode()}",
             'Failed'
         );

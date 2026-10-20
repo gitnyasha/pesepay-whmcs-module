@@ -117,9 +117,20 @@ function pesepay_link($params)
 
     $url = $systemUrl . '/modules/gateways/callback/' . $moduleName . '.php';
 
+    // Sign the invoice, amount and currency into the result URL. The callback
+    // rejects anything that does not carry a valid token, so a forged post
+    // (e.g. replaying another payment's reference number) cannot credit a
+    // different invoice without the encryption key.
+    $tokenPayload = $invoiceId . '|' . $amount . '|' . $currencyCode;
+    $token = hash_hmac('sha256', $tokenPayload, $encryptionKey);
+    $resultUrl = $url . '?invoiceid=' . urlencode($invoiceId)
+        . '&amount=' . urlencode($amount)
+        . '&currency=' . urlencode($currencyCode)
+        . '&token=' . $token;
+
     $pesepay = new Pesepay($integrationKey, $encryptionKey, $isSandbox);
     $pesepay->returnUrl = $returnUrl;
-    $pesepay->resultUrl = $url;
+    $pesepay->resultUrl = $resultUrl;
 
     $transaction = $pesepay->createTransaction($amount, $currencyCode, "Payment for invoice " . $invoiceId, "Invoice #" . $invoiceId . " Time: " . date("h:i:sa"));
 
